@@ -31,6 +31,22 @@
       width: 300px;
       text-align: center;
       position: relative;
+      transition: transform 0.3s ease;
+    }
+    .example-block:hover {
+      transform: scale(1.05);
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
     }
     .copy-button {
       margin-top: 1rem;
@@ -53,24 +69,27 @@
   </style>
 </head>
 <body>
-  <h1>🔗 Examples of Ratpi Studio Badge Integration</h1>
+  <h1>🔗 Customize your Ratpi Studio Badge</h1>
 
   <div class="example-block">
-    <h2>Default (sombre, pas d'animation)</h2>
-    <iframe src="https://ratpi-studio.github.io/ratpi-badge/" style="width: 250px; height: 60px;"></iframe>
-    <button class="copy-button" onclick="copyToClipboard('<iframe src=\'https://ratpi-studio.github.io/ratpi-badge/\' style=\'border: none; background: transparent; width: 250px; height: 60px;\' loading=\'lazy\'></iframe>')">Copier le code</button>
-  </div>
+    <h2>Personnaliser votre badge</h2>
+    <iframe id="badgePreview" src="https://ratpi-studio.github.io/ratpi-badge/" style="width: 250px; height: 60px;"></iframe>
 
-  <div class="example-block">
-    <h2>Animation en boucle + Thème automatique</h2>
-    <iframe src="https://ratpi-studio.github.io/ratpi-badge/?animate=loop&theme=auto" style="width: 250px; height: 60px;"></iframe>
-    <button class="copy-button" onclick="copyToClipboard('<iframe src=\'https://ratpi-studio.github.io/ratpi-badge/?animate=loop&theme=auto\' style=\'border: none; background: transparent; width: 250px; height: 60px;\' loading=\'lazy\'></iframe>')">Copier le code</button>
-  </div>
+    <div class="controls">
+      <label>
+        <input type="checkbox" id="animateSwitch">
+        Animation
+      </label>
+      <label>
+        <select id="themeSelect">
+          <option value="">Sombre (défaut)</option>
+          <option value="auto">Auto</option>
+          <option value="light">Clair</option>
+        </select>
+      </label>
+    </div>
 
-  <div class="example-block">
-    <h2>Forcer Thème Clair + Animation</h2>
-    <iframe src="https://ratpi-studio.github.io/ratpi-badge/?animate=loop&theme=light" style="width: 250px; height: 60px;"></iframe>
-    <button class="copy-button" onclick="copyToClipboard('<iframe src=\'https://ratpi-studio.github.io/ratpi-badge/?animate=loop&theme=light\' style=\'border: none; background: transparent; width: 250px; height: 60px;\' loading=\'lazy\'></iframe>')">Copier le code</button>
+    <button class="copy-button" onclick="copyGeneratedIframe()">Copier le code</button>
   </div>
 
   <p>---<br>
@@ -78,8 +97,26 @@
   </p>
 
   <script>
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(function() {
+    const animateSwitch = document.getElementById('animateSwitch');
+    const themeSelect = document.getElementById('themeSelect');
+    const badgePreview = document.getElementById('badgePreview');
+
+    function updatePreview() {
+      let url = 'https://ratpi-studio.github.io/ratpi-badge/';
+      const params = [];
+      if (animateSwitch.checked) params.push('animate=loop');
+      if (themeSelect.value) params.push(`theme=${themeSelect.value}`);
+      if (params.length) url += '?' + params.join('&');
+      badgePreview.src = url;
+    }
+
+    animateSwitch.addEventListener('change', updatePreview);
+    themeSelect.addEventListener('change', updatePreview);
+
+    function copyGeneratedIframe() {
+      const src = badgePreview.src;
+      const iframeCode = `<iframe src='${src}' style='border: none; background: transparent; width: 250px; height: 60px;' loading='lazy'></iframe>`;
+      navigator.clipboard.writeText(iframeCode).then(function() {
         alert('Code copié dans le presse-papiers !');
       }, function(err) {
         console.error('Erreur lors de la copie : ', err);
