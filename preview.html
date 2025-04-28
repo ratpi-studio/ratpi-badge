@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ratpi Badge Examples</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1, h2 {
+      color: #f0f0f0;
+    }
+    iframe {
+      margin: 1rem 0;
+      background: transparent;
+      border: none;
+    }
+    .example-block {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      width: 300px;
+      text-align: center;
+      position: relative;
+    }
+    .copy-button {
+      margin-top: 1rem;
+      background: #00ffff;
+      color: #111;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .copy-button:hover {
+      background: #00cccc;
+    }
+    p {
+      margin-top: 2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔗 Examples of Ratpi Studio Badge Integration</h1>
+
+  <div class="example-block">
+    <h2>Default (sombre, pas d'animation)</h2>
+    <iframe src="https://ratpi-studio.github.io/ratpi-badge/" style="width: 250px; height: 60px;"></iframe>
+    <button class="copy-button" onclick="copyToClipboard('<iframe src=\'https://ratpi-studio.github.io/ratpi-badge/\' style=\'border: none; background: transparent; width: 250px; height: 60px;\' loading=\'lazy\'></iframe>')">Copier le code</button>
+  </div>
+
+  <div class="example-block">
+    <h2>Animation en boucle + Thème automatique</h2>
+    <iframe src="https://ratpi-studio.github.io/ratpi-badge/?animate=loop&theme=auto" style="width: 250px; height: 60px;"></iframe>
+    <button class="copy-button" onclick="copyToClipboard('<iframe src=\'https://ratpi-studio.github.io/ratpi-badge/?animate=loop&theme=auto\' style=\'border: none; background: transparent; width: 250px; height: 60px;\' loading=\'lazy\'></iframe>')">Copier le code</button>
+  </div>
+
+  <div class="example-block">
+    <h2>Forcer Thème Clair + Animation</h2>
+    <iframe src="https://ratpi-studio.github.io/ratpi-badge/?animate=loop&theme=light" style="width: 250px; height: 60px;"></iframe>
+    <button class="copy-button" onclick="copyToClipboard('<iframe src=\'https://ratpi-studio.github.io/ratpi-badge/?animate=loop&theme=light\' style=\'border: none; background: transparent; width: 250px; height: 60px;\' loading=\'lazy\'></iframe>')">Copier le code</button>
+  </div>
+
+  <p>---<br>
+  Made with 🐭 by <a href="https://ratpi-studio.fr" style="color: #00ffff;">Ratpi Studio</a>
+  </p>
+
+  <script>
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(function() {
+        alert('Code copié dans le presse-papiers !');
+      }, function(err) {
+        console.error('Erreur lors de la copie : ', err);
+      });
+    }
+  </script>
+</body>
+</html>
