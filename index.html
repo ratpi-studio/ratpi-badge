@@ -31,7 +31,6 @@
       border: 1px solid rgba(255, 255, 255, 0.3);
       background: rgba(255, 255, 255, 0.15);
       overflow: hidden;
-      position: relative;
     }
 
     .ratpi-badge.light {
@@ -74,27 +73,6 @@
         border: 1px solid rgba(255, 255, 255, 0.3);
       }
     }
-
-    .running-mouse {
-      position: absolute;
-      bottom: 0;
-      left: -60px;
-      width: 60px;
-      height: 30px;
-      background: url('https://ratpi-studio.github.io/ratpi-badge/mouse.gif') center/contain no-repeat;
-      animation: runMouse 4s linear forwards;
-      pointer-events: none;
-    }
-
-    @keyframes runMouse {
-      0% { left: -60px; }
-      100% { left: 100%; }
-    }
-
-    .hide-text {
-      opacity: 0;
-      transition: opacity 0.5s;
-    }
   </style>
 </head>
 <body>
@@ -109,7 +87,6 @@
       const params = new URLSearchParams(window.location.search);
       const badge = document.getElementById('ratpiBadge');
       const mouse = document.querySelector('.mouse');
-      const texts = document.querySelectorAll('.badge-text');
 
       const animate = params.get('animate');
       if (animate === 'loop') {
@@ -127,35 +104,6 @@
       if (fontSize) {
         badge.style.fontSize = fontSize;
       }
-
-      function spawnRunningMouse() {
-        if (document.querySelector('.running-mouse')) return;
-        const runner = document.createElement('div');
-        runner.classList.add('running-mouse');
-        badge.appendChild(runner);
-
-        texts.forEach(t => t.classList.add('hide-text'));
-
-        setTimeout(() => {
-          runner.remove();
-          texts.forEach(t => t.classList.remove('hide-text'));
-        }, 4000);
-      }
-
-      // Lancement automatique après un délai initial
-      setTimeout(spawnRunningMouse, Math.random() * 10000 + 5000);
-
-      // Ajout : déclenchement à chaque hover du badge
-      badge.addEventListener('mouseenter', () => {
-        spawnRunningMouse();
-      });
-
-      // Ajout : écoute des messages pour spawn à distance (optionnel)
-      window.addEventListener('message', (event) => {
-        if (event.data && event.data.triggerMouseRun) {
-          spawnRunningMouse();
-        }
-      });
     })();
   </script>
 </body>
