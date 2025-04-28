@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Ratpi Badge</title>
   <style>
     body {
       margin: 0;
@@ -30,6 +31,7 @@
       border: 1px solid rgba(255, 255, 255, 0.3);
       background: rgba(255, 255, 255, 0.15);
       overflow: hidden;
+      position: relative;
     }
 
     .ratpi-badge.light {
@@ -96,7 +98,7 @@
   </style>
 </head>
 <body>
-  <a href="https://ratpi-studio.fr" class="ratpi-badge" target="_blank" rel="noopener noreferrer">
+  <a href="https://ratpi-studio.fr" class="ratpi-badge" id="ratpiBadge" target="_blank" rel="noopener noreferrer">
     <span class="badge-text">Made with</span>
     <span class="mouse">🐭</span>
     <span class="badge-text">by Ratpi Studio!</span>
@@ -105,7 +107,7 @@
   <script>
     (function() {
       const params = new URLSearchParams(window.location.search);
-      const badge = document.querySelector('.ratpi-badge');
+      const badge = document.getElementById('ratpiBadge');
       const mouse = document.querySelector('.mouse');
       const texts = document.querySelectorAll('.badge-text');
 
@@ -121,7 +123,13 @@
         badge.classList.add('auto-theme');
       }
 
+      const fontSize = params.get('fontsize');
+      if (fontSize) {
+        badge.style.fontSize = fontSize;
+      }
+
       function spawnRunningMouse() {
+        if (document.querySelector('.running-mouse')) return;
         const runner = document.createElement('div');
         runner.classList.add('running-mouse');
         badge.appendChild(runner);
@@ -132,12 +140,22 @@
           runner.remove();
           texts.forEach(t => t.classList.remove('hide-text'));
         }, 4000);
-
-        const nextRun = Math.random() * 20000 + 20000;
-        setTimeout(spawnRunningMouse, nextRun);
       }
 
+      // Lancement automatique après un délai initial
       setTimeout(spawnRunningMouse, Math.random() * 10000 + 5000);
+
+      // Ajout : déclenchement à chaque hover du badge
+      badge.addEventListener('mouseenter', () => {
+        spawnRunningMouse();
+      });
+
+      // Ajout : écoute des messages pour spawn à distance (optionnel)
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.triggerMouseRun) {
+          spawnRunningMouse();
+        }
+      });
     })();
   </script>
 </body>
