@@ -3,7 +3,7 @@ name: Minify and Deploy Badge
 on:
   push:
     branches:
-      - develop
+      - master
 
 jobs:
   minify:
