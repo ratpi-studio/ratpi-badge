@@ -47,7 +47,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create directory for minified files
-        run: mkdir -p minified
+        run: |
+          rm -rf minified/*
+          mkdir -p minified
 
       - name: Minify and Rename Files
         run: |
@@ -68,6 +70,13 @@ jobs:
             git pull --rebase origin main
             git push origin main
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Git Tag
+        run: |
+          git tag -a "v${NEW_VERSION}" -m "Release version ${NEW_VERSION}"
+          git push origin "v${NEW_VERSION}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
