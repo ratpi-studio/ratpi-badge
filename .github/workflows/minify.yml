@@ -75,4 +75,5 @@ jobs:
           echo "## Minified Files Links" >> $GITHUB_STEP_SUMMARY
           for file in minified/*; do
             size=$(stat -c%s "$file")
-            echo "- [$(basename $file)](https://ratpi-studio.github.io/ratpi-badge/$(basename $file)) : ${size} bytes" >> $GITHUB_STEP_SUMMARY
+            echo "- [$(basename "$file")](https://ratpi-studio.github.io/ratpi-badge/$(basename "$file")) : ${size} bytes" >> $GITHUB_STEP_SUMMARY
+          done
