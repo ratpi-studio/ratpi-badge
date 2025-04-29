@@ -42,11 +42,14 @@ jobs:
           minified_js_size=$(stat -c%s "minified/badge.min.js")
           echo "badge.min.js: ${original_js_size} bytes -> minified/badge.min.js: ${minified_js_size} bytes"
 
-      - name: Upload minified files
-        uses: actions/upload-artifact@v4
-        with:
-          name: minified
-          path: minified/
+      - name: Push minified files to repo
+        run: |
+          cp minified/* .
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add *.html *.js
+          git commit -m "Add minified files [skip ci]"
+          git push origin main
 
       - name: Create GitHub Summary
         run: |
