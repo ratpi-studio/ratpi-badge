@@ -23,15 +23,28 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install minifiers
-        run: |
-          npm install -g html-minifier-terser terser
+      - name: Install dependencies
+        run: npm install
 
-      - name: Extract Version
-        id: extract_version
+      - name: Increment Version
+        id: increment_version
         run: |
-          VERSION=$(grep -oP 'const VERSION = "\K[0-9]+\.[0-9]+\.[0-9]+' badge.min.js)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v OFS=. '{$NF++; print}')
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          jq ".version = \"$NEW_VERSION\"" package.json > package.tmp.json && mv package.tmp.json package.json
+          echo "Version updated to $NEW_VERSION"
+
+      - name: Commit Updated Version
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add package.json
+          git commit -m "Bump version to ${NEW_VERSION} [skip ci]"
+          git pull --rebase origin main
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create directory for minified files
         run: mkdir -p minified
@@ -40,19 +53,18 @@ jobs:
         run: |
           echo "Minifying files and appending version suffix..."
 
-          html-minifier-terser index.html -o minified/index.html --collapse-whitespace --remove-comments
-          terser badge.min.js -o minified/badge.min.${VERSION}.js --compress --mangle
+          html-minifier-terser index.html -o minified/index.min.${NEW_VERSION}.html --collapse-whitespace --remove-comments --minify-css true --minify-js true
+          terser badge.js -o minified/badge.min.${NEW_VERSION}.js --compress --mangle
 
       - name: Commit and Push Minified Files
         run: |
-          cp minified/* .
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
           git add minified/
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Minified files for version ${VERSION} [skip ci]"
+            git commit -m "Minified files for version ${NEW_VERSION} [skip ci]"
             git pull --rebase origin main
             git push origin main
           fi
@@ -66,5 +78,5 @@ jobs:
           
           for file in minified/*; do
             size=$(stat -c%s "$file")
-            echo "- [$(basename "$file")](https://ratpi-studio.github.io/ratpi-badge/$(basename "$file")) : ${size} bytes" >> $GITHUB_STEP_SUMMARY
+            echo "- [$(basename "$file")](https://ratpi-studio.github.io/ratpi-badge/minified/$(basename "$file")) : ${size} bytes" >> $GITHUB_STEP_SUMMARY
           done

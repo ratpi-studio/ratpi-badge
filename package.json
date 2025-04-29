@@ -1,0 +1,9 @@
+{
+  "name": "ratpi-badge",
+  "version": "1.0.0",
+  "description": "Ratpi Studio Badge",
+  "main": "badge.js",
+  "scripts": {},
+  "author": "Ratpi Studio",
+  "license": "MIT"
+}
