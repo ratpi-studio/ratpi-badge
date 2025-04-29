@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Ratpi Badge</title>
-  <style>
-    body {
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Ratpi Badge</title><style>body {
       margin: 0;
       padding: 0;
       background: transparent;
@@ -72,18 +66,7 @@
         color: black;
         border: 1px solid rgba(255, 255, 255, 0.3);
       }
-    }
-  </style>
-</head>
-<body>
-  <a href="https://ratpi-studio.fr" class="ratpi-badge" id="ratpiBadge" target="_blank" rel="noopener noreferrer">
-    <span class="badge-text">Made with</span>
-    <span class="mouse">🐭</span>
-    <span class="badge-text">by Ratpi Studio!</span>
-  </a>
-
-  <script>
-    (function() {
+    }</style></head><body><a href="https://ratpi-studio.fr" class="ratpi-badge" id="ratpiBadge" target="_blank" rel="noopener noreferrer"><span class="badge-text">Made with</span> <span class="mouse">🐭</span> <span class="badge-text">by Ratpi Studio!</span></a><script>(function() {
       const params = new URLSearchParams(window.location.search);
       const badge = document.getElementById('ratpiBadge');
       const mouse = document.querySelector('.mouse');
@@ -104,7 +87,4 @@
       if (fontSize) {
         badge.style.fontSize = fontSize;
       }
-    })();
-  </script>
-</body>
-</html>
+    })();</script></body></html>
