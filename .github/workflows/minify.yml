@@ -84,20 +84,25 @@ jobs:
             exit 1
           fi
 
-          npx javascript-obfuscator badge.js --output minified/badge.obf.${NEW_VERSION}.js \
-            --compact true \
-            --control-flow-flattening true \
-            --dead-code-injection true \
-            --debug-protection false \
-            --disable-console-output true \
-            --identifier-names-generator hexadecimal \
-            --rename-globals true \
-            --self-defending true \
-            --string-array true \
-            --string-array-encoding base64 \
-            --string-array-index-shift true \
-            --transform-object-keys true \
-            --unicode-escape-sequence true
+          echo "Minifying and obfuscating index.html..."
+          npx html-minifier-terser index.html -o minified/index.min.${NEW_VERSION}.html \
+            --collapse-boolean-attributes \
+            --collapse-inline-tag-whitespace \
+            --collapse-whitespace \
+            --conservative-collapse \
+            --decode-entities \
+            --minify-css true \
+            --minify-js true \
+            --remove-comments \
+            --remove-empty-attributes \
+            --remove-optional-tags \
+            --remove-redundant-attributes \
+            --remove-script-type-attributes \
+            --remove-style-link-type-attributes \
+            --sort-attributes \
+            --sort-class-name \
+            --use-short-doctype
+        
 
           if [ -f "minified/badge.obf.${NEW_VERSION}.js" ]; then
             echo "Obfuscation successful. Copying final version..."
