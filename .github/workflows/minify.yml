@@ -1,4 +1,4 @@
-name: Minify, Version, and Deploy Badge
+name: Minify, Obfuscate, Version, and Deploy Badge
 
 on:
   push:
@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install Obfuscator
+        run: npm install --save-dev javascript-obfuscator
+
       - name: Increment Version
         id: increment_version
         run: |
@@ -50,24 +53,57 @@ jobs:
         run: |
           rm -rf minified/*
           mkdir -p minified
-          cp badge.js minified/badge.js
 
-      - name: Minify and Rename Files
+      - name: Minify and Obfuscate HTML
         run: |
-          echo "Minifying files and appending version suffix..."
+          echo "Minifying and obfuscating index.html..."
+          npx html-minifier-terser index.html -o minified/index.min.${NEW_VERSION}.html \
+            --collapse-boolean-attributes \
+            --collapse-inline-tag-whitespace \
+            --collapse-whitespace \
+            --conservative-collapse \
+            --decode-entities \
+            --html5 \
+            --minify-css true \
+            --minify-js true \
+            --remove-comments \
+            --remove-empty-attributes \
+            --remove-optional-tags \
+            --remove-redundant-attributes \
+            --remove-script-type-attributes \
+            --remove-style-link-type-attributes \
+            --sort-attributes \
+            --sort-class-name \
+            --use-short-doctype
+
+      - name: Obfuscate and Minify badge.js
+        run: |
+          echo "Obfuscating and minifying badge.js..."
           if [ ! -f "badge.js" ]; then
-            echo "Error: Source file badge.js not found!" >&2
+            echo "Error: badge.js not found!" >&2
             exit 1
           fi
-          npx html-minifier-terser index.html -o minified/index.min.${NEW_VERSION}.html --collapse-whitespace --remove-comments --minify-css true --minify-js true
-          npx terser badge.js -o minified/badge.min.${NEW_VERSION}.js --compress --mangle --ecma 2020 --toplevel --output beautify=false || {
-            echo "Error: Minification of badge.js failed!" >&2
-            exit 1
-          }
-          if [ -f "minified/badge.min.${NEW_VERSION}.js" ]; then
-            cp minified/badge.min.${NEW_VERSION}.js minified/badge.min.js
+
+          npx javascript-obfuscator badge.js --output minified/badge.obf.${NEW_VERSION}.js \
+            --compact true \
+            --control-flow-flattening true \
+            --dead-code-injection true \
+            --debug-protection false \
+            --disable-console-output true \
+            --identifier-names-generator hexadecimal \
+            --rename-globals true \
+            --self-defending true \
+            --string-array true \
+            --string-array-encoding base64 \
+            --string-array-index-shift true \
+            --transform-object-keys true \
+            --unicode-escape-sequence true
+
+          if [ -f "minified/badge.obf.${NEW_VERSION}.js" ]; then
+            echo "Obfuscation successful. Copying final version..."
+            cp minified/badge.obf.${NEW_VERSION}.js minified/badge.min.js
           else
-            echo "Error: Minified badge.js not found after terser execution!" >&2
+            echo "Obfuscation failed!" >&2
             exit 1
           fi
 
@@ -79,7 +115,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Minified files for version ${NEW_VERSION} [skip ci]"
+            git commit -m "Minified & obfuscated files for version ${NEW_VERSION} [skip ci]"
             git pull --rebase origin main
             git push origin main
           fi
@@ -95,8 +131,8 @@ jobs:
 
       - name: Create GitHub Summary
         run: |
-          echo "# 🚀 Minified Files Summary" >> $GITHUB_STEP_SUMMARY
-          echo "## File Sizes After Minification" >> $GITHUB_STEP_SUMMARY
+          echo "# 🚀 Obfuscated Files Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## File Sizes After Obfuscation" >> $GITHUB_STEP_SUMMARY
           
           for file in minified/*; do
             size=$(stat -c%s "$file")
