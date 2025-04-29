@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Ratpi Badge Preview</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <style>
     body {
       background: #111;
@@ -46,7 +47,7 @@
       font-size: 0.9rem;
     }
     #preview-container {
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
       width: 250px;
       height: 60px;
       display: flex;
@@ -60,18 +61,31 @@
       border: none;
       background: transparent;
     }
-    .copy-button {
-      margin-top: 1rem;
+    pre {
+      background: #222;
+      padding: 1rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      overflow-x: auto;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .copy-code-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
       background: #00ffff;
       color: #111;
       border: none;
-      padding: 0.7rem 1.5rem;
-      border-radius: 8px;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 0.8rem;
       transition: background 0.3s;
     }
-    .copy-button:hover {
+    .copy-code-button:hover {
       background: #00cccc;
     }
     #toast {
@@ -127,10 +141,11 @@
 
   <div id="preview-container"></div>
 
-  <button class="copy-button" onclick="copyGeneratedCode()">Copier le code</button>
+  <pre><button class="copy-code-button" onclick="copyGeneratedCode()">Copier</button><code id="generated-code" class="html"></code></pre>
 
   <div id="toast">Code copié !</div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>
     const animateSwitch = document.getElementById('animateSwitch');
     const themeSelect = document.getElementById('themeSelect');
@@ -138,38 +153,13 @@
     const integrationMode = document.getElementById('integrationMode');
     const minifySwitch = document.getElementById('minifySwitch');
     const previewContainer = document.getElementById('preview-container');
+    const generatedCode = document.getElementById('generated-code');
     const toast = document.getElementById('toast');
 
     function updatePreview() {
-      previewContainer.innerHTML = ''; // Reset
+      previewContainer.innerHTML = '';
+      generatedCode.textContent = '';
 
-      const base = minifySwitch.checked ? 'https://ratpi-studio.github.io/ratpi-badge/minified/' : 'https://ratpi-studio.github.io/ratpi-badge/';
-      const params = [];
-      if (animateSwitch.checked) params.push('animate=loop');
-      if (themeSelect.value) params.push(`theme=${themeSelect.value}`);
-      if (fontSizeInput.value) params.push(`fontsize=${encodeURIComponent(fontSizeInput.value)}`);
-      const query = params.length ? '?' + params.join('&') : '';
-
-      if (integrationMode.value === 'iframe') {
-        const iframe = document.createElement('iframe');
-        iframe.src = base + 'index.html' + query;
-        iframe.style.width = '250px';
-        iframe.style.height = '60px';
-        iframe.style.border = 'none';
-        iframe.style.background = 'transparent';
-        iframe.loading = 'lazy';
-        previewContainer.appendChild(iframe);
-      } else {
-        const div = document.createElement('div');
-        div.id = 'ratpi-badge';
-        previewContainer.appendChild(div);
-        const script = document.createElement('script');
-        script.src = base + 'badge.min.js' + query;
-        previewContainer.appendChild(script);
-      }
-    }
-
-    function copyGeneratedCode() {
       const base = minifySwitch.checked ? 'https://ratpi-studio.github.io/ratpi-badge/minified/' : 'https://ratpi-studio.github.io/ratpi-badge/';
       const params = [];
       if (animateSwitch.checked) params.push('animate=loop');
@@ -179,11 +169,31 @@
 
       let code = '';
       if (integrationMode.value === 'iframe') {
-        code = `<iframe src='${base}index.html${query}' style='border: none; background: transparent; width: 250px; height: 60px;' loading='lazy'></iframe>`;
+        code = `<iframe src="${base}index.html${query}" style="border: none; background: transparent; width: 250px; height: 60px;" loading="lazy"></iframe>`;
+        const iframe = document.createElement('iframe');
+        iframe.src = base + 'index.html' + query;
+        iframe.style.width = '250px';
+        iframe.style.height = '60px';
+        iframe.style.border = 'none';
+        iframe.style.background = 'transparent';
+        iframe.loading = 'lazy';
+        previewContainer.appendChild(iframe);
       } else {
-        code = `<div id=\"ratpi-badge\"></div>\n<script src=\"${base}badge.min.js${query}\"/>`;
+        code = `<div id="ratpi-badge"></div>\n<script src="${base}badge.min.js${query}"/>`;
+        const div = document.createElement('div');
+        div.id = 'ratpi-badge';
+        previewContainer.appendChild(div);
+        const script = document.createElement('script');
+        script.src = base + 'badge.min.js' + query;
+        previewContainer.appendChild(script);
       }
-      navigator.clipboard.writeText(code).then(showToast);
+
+      generatedCode.textContent = code.trim();
+      hljs.highlightElement(generatedCode);
+    }
+
+    function copyGeneratedCode() {
+      navigator.clipboard.writeText(generatedCode.textContent).then(showToast);
     }
 
     function showToast() {
@@ -193,9 +203,7 @@
       }, 2000);
     }
 
-    // Init
     updatePreview();
-
     animateSwitch.addEventListener('change', updatePreview);
     themeSelect.addEventListener('change', updatePreview);
     fontSizeInput.addEventListener('input', updatePreview);
