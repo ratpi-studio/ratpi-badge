@@ -1,5 +1,9 @@
 # 🐭 Ratpi Studio Badge
 
+![Version](https://img.shields.io/github/v/release/ratpi-studio/ratpi-badge?style=flat-square)
+![Build](https://img.shields.io/github/actions/workflow/status/ratpi-studio/ratpi-badge/build.yml?style=flat-square)
+![License](https://img.shields.io/github/license/ratpi-studio/ratpi-badge?style=flat-square)
+
 Petit badge animé à intégrer facilement sur vos sites et apps !
 
 ---
@@ -44,6 +48,11 @@ Petit badge animé à intégrer facilement sur vos sites et apps !
 
 - Tous les fichiers optimisés sont accessibles dans [`/minified`](https://ratpi-studio.github.io/ratpi-badge/minified/)
 - Chargement ultra-rapide pour la production 🚀
+- **Utilisation d'une version spécifique** :
+  ```html
+  <script src="https://ratpi-studio.github.io/ratpi-badge/minified/badge.min.1.0.0.js"></script>
+  ```
+  Remplacez `1.0.0` par la version souhaitée.
 
 ---
 

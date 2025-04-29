@@ -1,4 +1,4 @@
-name: Minify and Deploy Badge
+name: Minify, Version, and Deploy Badge
 
 on:
   push:
@@ -27,54 +27,43 @@ jobs:
         run: |
           npm install -g html-minifier-terser terser
 
+      - name: Extract Version
+        id: extract_version
+        run: |
+          VERSION=$(grep -oP 'const VERSION = "\K[0-9]+\.[0-9]+\.[0-9]+' badge.min.js)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Create directory for minified files
         run: mkdir -p minified
 
-      - name: Compare and Minify Files
+      - name: Minify and Rename Files
         run: |
-          echo "Comparing file sizes before and after minification..."
+          echo "Minifying files and appending version suffix..."
 
-          original_html_size=$(stat -c%s "index.html")
           html-minifier-terser index.html -o minified/index.html --collapse-whitespace --remove-comments
-          minified_html_size=$(stat -c%s "minified/index.html")
-          echo "index.html: ${original_html_size} bytes -> minified/index.html: ${minified_html_size} bytes"
-
-          original_js_size=$(stat -c%s "badge.min.js")
-          terser badge.min.js -o minified/badge.min.js --compress --mangle
-          minified_js_size=$(stat -c%s "minified/badge.min.js")
-          echo "badge.min.js: ${original_js_size} bytes -> minified/badge.min.js: ${minified_js_size} bytes"
+          terser badge.min.js -o minified/badge.min.${VERSION}.js --compress --mangle
 
       - name: Commit and Push Minified Files
         run: |
           cp minified/* .
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add *.html *.js
+          git add minified/
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Add minified files [skip ci]"
+            git commit -m "Minified files for version ${VERSION} [skip ci]"
             git pull --rebase origin main
             git push origin main
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
       - name: Create GitHub Summary
         run: |
           echo "# 🚀 Minified Files Summary" >> $GITHUB_STEP_SUMMARY
-          echo "## File Sizes Before and After Minification" >> $GITHUB_STEP_SUMMARY
+          echo "## File Sizes After Minification" >> $GITHUB_STEP_SUMMARY
           
-          original_html_size=$(stat -c%s "index.html")
-          minified_html_size=$(stat -c%s "minified/index.html")
-          echo "- index.html: ${original_html_size} bytes -> minified/index.html: ${minified_html_size} bytes" >> $GITHUB_STEP_SUMMARY
-          
-          original_js_size=$(stat -c%s "badge.min.js")
-          minified_js_size=$(stat -c%s "minified/badge.min.js")
-          echo "- badge.min.js: ${original_js_size} bytes -> minified/badge.min.js: ${minified_js_size} bytes" >> $GITHUB_STEP_SUMMARY
-          
-          echo "## Minified Files Links" >> $GITHUB_STEP_SUMMARY
           for file in minified/*; do
             size=$(stat -c%s "$file")
             echo "- [$(basename "$file")](https://ratpi-studio.github.io/ratpi-badge/$(basename "$file")) : ${size} bytes" >> $GITHUB_STEP_SUMMARY
