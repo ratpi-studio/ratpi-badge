@@ -54,10 +54,12 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Add minified files [skip ci]"
+            git pull --rebase origin main
             git push origin main
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: Create GitHub Summary
         run: |
