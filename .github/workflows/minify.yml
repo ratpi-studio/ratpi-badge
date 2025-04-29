@@ -50,13 +50,14 @@ jobs:
         run: |
           rm -rf minified/*
           mkdir -p minified
+          cp badge.js minified/badge.js
 
       - name: Minify and Rename Files
         run: |
           echo "Minifying files and appending version suffix..."
-
           npx html-minifier-terser index.html -o minified/index.min.${NEW_VERSION}.html --collapse-whitespace --remove-comments --minify-css true --minify-js true
           npx terser badge.js -o minified/badge.min.${NEW_VERSION}.js --compress --mangle --ecma 2020 --toplevel --output beautify=false
+          cp minified/badge.min.${NEW_VERSION}.js minified/badge.min.js
 
       - name: Commit and Push Minified Files
         run: |
