@@ -181,7 +181,7 @@
       if (integrationMode.value === 'iframe') {
         code = `<iframe src='${base}index.html${query}' style='border: none; background: transparent; width: 250px; height: 60px;' loading='lazy'></iframe>`;
       } else {
-        code = `<div id=\"ratpi-badge\"></div>\n<script src=\"${base}badge.min.js${query}\"></script>`;
+        code = `<div id=\"ratpi-badge\"></div>\n<script src=\"${base}badge.min.js${query}\"/>`;
       }
       navigator.clipboard.writeText(code).then(showToast);
     }
