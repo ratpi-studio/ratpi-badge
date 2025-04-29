@@ -3,7 +3,13 @@
   "version": "1.0.1",
   "description": "Ratpi Studio Badge",
   "main": "badge.js",
-  "scripts": {},
+  "scripts": {
+    "minify": "npx html-minifier-terser index.html -o minified/index.min.$npm_package_version.html --collapse-whitespace --remove-comments --minify-css true --minify-js true && npx terser badge.js -o minified/badge.min.$npm_package_version.js --compress --mangle"
+  },
   "author": "Ratpi Studio",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "html-minifier-terser": "^7.0.0",
+    "terser": "^5.17.0"
+  }
 }
