@@ -1,6 +1,6 @@
 {
   "name": "ratpi-badge",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Ratpi Studio Badge",
   "main": "badge.js",
   "scripts": {
