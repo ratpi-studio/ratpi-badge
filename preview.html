@@ -127,6 +127,10 @@
       <input type="text" id="fontSizeInput" placeholder="ex: 1rem ou 14px">
     </label>
     <label>
+      Version
+      <input type="text" id="versionInput" placeholder="ex: v1.0.13">
+    </label>
+    <label>
       Mode d'intégration
       <select id="integrationMode">
         <option value="iframe">Iframe</option>
@@ -150,6 +154,7 @@
     const animateSwitch = document.getElementById('animateSwitch');
     const themeSelect = document.getElementById('themeSelect');
     const fontSizeInput = document.getElementById('fontSizeInput');
+    const versionInput = document.getElementById('versionInput');
     const integrationMode = document.getElementById('integrationMode');
     const minifySwitch = document.getElementById('minifySwitch');
     const previewContainer = document.getElementById('preview-container');
@@ -165,6 +170,7 @@
       if (animateSwitch.checked) params.push('animate=loop');
       if (themeSelect.value) params.push(`theme=${themeSelect.value}`);
       if (fontSizeInput.value) params.push(`fontsize=${encodeURIComponent(fontSizeInput.value)}`);
+      if (versionInput.value) params.push(`version=${encodeURIComponent(versionInput.value)}`);
       const query = params.length ? '?' + params.join('&') : '';
 
       let code = '';
@@ -207,6 +213,7 @@
     animateSwitch.addEventListener('change', updatePreview);
     themeSelect.addEventListener('change', updatePreview);
     fontSizeInput.addEventListener('input', updatePreview);
+    versionInput.addEventListener('input', updatePreview);
     integrationMode.addEventListener('change', updatePreview);
     minifySwitch.addEventListener('change', updatePreview);
   </script>

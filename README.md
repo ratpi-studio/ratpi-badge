@@ -35,6 +35,7 @@ Petit badge animé à intégrer facilement sur vos sites et apps !
 | `theme=auto`    | Détecte automatiquement le thème clair/sombre | `?theme=auto`                    |
 | `theme=light`   | Force le thème clair                         | `?theme=light`                   |
 | `fontsize=1rem` | Définit la taille du texte                  | `?fontsize=1rem`                 |
+| `version=v1.0.13` | Charge une version spécifique du badge     | `?version=v1.0.13`               |
 
 ---
 
