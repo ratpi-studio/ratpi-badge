@@ -70,7 +70,7 @@ jobs:
       - name: Minify and Obfuscate HTML
         run: |
           echo "Minifying and obfuscating index.html..."
-          npx html-minifier-terser index.html -o minified/index.min.${NEW_VERSION}.html \
+          npx html-minifier-terser index.html -o minified/index.min.html \
           --collapse-boolean-attributes \
           --collapse-inline-tag-whitespace \
           --collapse-whitespace \
@@ -96,7 +96,7 @@ jobs:
             exit 1
           fi
 
-           npx javascript-obfuscator badge.js --output minified/badge.min.${NEW_VERSION}.js \
+           npx javascript-obfuscator badge.js --output minified/badge.min.js \
             --compact true \
             --control-flow-flattening true \
             --dead-code-injection true \

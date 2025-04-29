@@ -12,7 +12,7 @@
         if (tagExists) {
           // Charger le fichier correspondant à la version demandée
           const script = document.createElement("script");
-          script.src = `hhttps://github.com/ratpi-studio/ratpi-badge/blob/v${requestedVersion}/minified/badge.min.${requestedVersion}.js`;
+          script.src = `hhttps://github.com/ratpi-studio/ratpi-badge/blob/v${requestedVersion}/minified/badge.min.js`;
           document.body.appendChild(script);
         } else {
           // Rediriger vers le dernier tag disponible
@@ -23,7 +23,7 @@
       } else {
         // Si aucune version n'est demandée, charger le dernier tag disponible
         const script = document.createElement("script");
-          script.src = `hhttps://github.com/ratpi-studio/ratpi-badge/blob/v${requestedVersion}/minified/badge.min.${fallbackVersion}.js`;
+          script.src = `hhttps://github.com/ratpi-studio/ratpi-badge/blob/v${requestedVersion}/minified/badge.min.js`;
         document.body.appendChild(script);
       }
     })
