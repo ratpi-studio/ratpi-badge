@@ -55,26 +55,10 @@
       const tags = await res.json();
       const latest = tags[0]?.name;
   
-      if (!requestedVersion) {
-        // Pas de version dans l'URL → on utilise la dernière
-        loadBadgeScript(latest);
+      if (requestedVersion && tags.some(tag => tag.name === requestedVersion)) {
+        loadBadgeScript(requestedVersion);
       } else {
-        const versionExists = tags.some(tag => tag.name === requestedVersion);
-        if (versionExists) {
-          loadBadgeScript(requestedVersion);
-        } else {
-          if (requestedVersion !== latest) {
-            // Redirige seulement si on n’est pas déjà sur la version fallback
-            const url = new URL(window.location.href);
-            url.searchParams.set("version", latest);
-            window.location.href = url.toString();
-            return;
-          } else {
-            // Version fallback invalide aussi → on charge sans version
-            console.warn("Version invalide. Chargement sans fallback.");
-            loadBadgeScript("main");
-          }
-        }
+        loadBadgeScript(latest || "main");
       }
     } catch (err) {
       console.warn("Erreur GitHub API, chargement sans version.");
@@ -83,3 +67,4 @@
   
     renderBadge();
   })();
+  
