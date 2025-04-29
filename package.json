@@ -1,6 +1,6 @@
 {
   "name": "ratpi-badge",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Ratpi Studio Badge",
   "main": "badge.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "license": "MIT",
   "devDependencies": {
     "html-minifier-terser": "^7.0.0",
+    "javascript-obfuscator": "^4.1.1",
     "terser": "^5.17.0"
   }
 }
