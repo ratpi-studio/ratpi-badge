@@ -55,12 +55,19 @@ jobs:
       - name: Minify and Rename Files
         run: |
           echo "Minifying files and appending version suffix..."
+          if [ ! -f "badge.js" ]; then
+            echo "Error: Source file badge.js not found!" >&2
+            exit 1
+          fi
           npx html-minifier-terser index.html -o minified/index.min.${NEW_VERSION}.html --collapse-whitespace --remove-comments --minify-css true --minify-js true
-          npx terser badge.js -o minified/badge.min.${NEW_VERSION}.js --compress --mangle --ecma 2020 --toplevel --output beautify=false
+          npx terser badge.js -o minified/badge.min.${NEW_VERSION}.js --compress --mangle --ecma 2020 --toplevel --output beautify=false || {
+            echo "Error: Minification of badge.js failed!" >&2
+            exit 1
+          }
           if [ -f "minified/badge.min.${NEW_VERSION}.js" ]; then
             cp minified/badge.min.${NEW_VERSION}.js minified/badge.min.js
           else
-            echo "Error: Minified badge.js not found!" >&2
+            echo "Error: Minified badge.js not found after terser execution!" >&2
             exit 1
           fi
 
