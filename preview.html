@@ -45,12 +45,20 @@
       color: white;
       font-size: 0.9rem;
     }
+    #preview-container {
+      margin-bottom: 1rem;
+      width: 250px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
     iframe {
       width: 250px;
       height: 60px;
       border: none;
       background: transparent;
-      margin-bottom: 1rem;
     }
     .copy-button {
       margin-top: 1rem;
@@ -117,7 +125,7 @@
     </label>
   </div>
 
-  <iframe id="badgePreview" src="https://ratpi-studio.github.io/ratpi-badge/" loading="lazy"></iframe>
+  <div id="preview-container"></div>
 
   <button class="copy-button" onclick="copyGeneratedCode()">Copier le code</button>
 
@@ -129,37 +137,53 @@
     const fontSizeInput = document.getElementById('fontSizeInput');
     const integrationMode = document.getElementById('integrationMode');
     const minifySwitch = document.getElementById('minifySwitch');
-    const badgePreview = document.getElementById('badgePreview');
+    const previewContainer = document.getElementById('preview-container');
     const toast = document.getElementById('toast');
 
     function updatePreview() {
+      previewContainer.innerHTML = ''; // Reset
+
       const base = minifySwitch.checked ? 'https://ratpi-studio.github.io/ratpi-badge/minified/' : 'https://ratpi-studio.github.io/ratpi-badge/';
-      let url = base + (integrationMode.value === 'iframe' ? 'index.html' : '');
       const params = [];
       if (animateSwitch.checked) params.push('animate=loop');
       if (themeSelect.value) params.push(`theme=${themeSelect.value}`);
       if (fontSizeInput.value) params.push(`fontsize=${encodeURIComponent(fontSizeInput.value)}`);
-      if (params.length) url += '?' + params.join('&');
-      badgePreview.src = url;
-    }
+      const query = params.length ? '?' + params.join('&') : '';
 
-    animateSwitch.addEventListener('change', updatePreview);
-    themeSelect.addEventListener('change', updatePreview);
-    fontSizeInput.addEventListener('input', updatePreview);
-    integrationMode.addEventListener('change', updatePreview);
-    minifySwitch.addEventListener('change', updatePreview);
+      if (integrationMode.value === 'iframe') {
+        const iframe = document.createElement('iframe');
+        iframe.src = base + 'index.html' + query;
+        iframe.style.width = '250px';
+        iframe.style.height = '60px';
+        iframe.style.border = 'none';
+        iframe.style.background = 'transparent';
+        iframe.loading = 'lazy';
+        previewContainer.appendChild(iframe);
+      } else {
+        const div = document.createElement('div');
+        div.id = 'ratpi-badge';
+        previewContainer.appendChild(div);
+        const script = document.createElement('script');
+        script.src = base + 'badge.min.js' + query;
+        previewContainer.appendChild(script);
+      }
+    }
 
     function copyGeneratedCode() {
       const base = minifySwitch.checked ? 'https://ratpi-studio.github.io/ratpi-badge/minified/' : 'https://ratpi-studio.github.io/ratpi-badge/';
+      const params = [];
+      if (animateSwitch.checked) params.push('animate=loop');
+      if (themeSelect.value) params.push(`theme=${themeSelect.value}`);
+      if (fontSizeInput.value) params.push(`fontsize=${encodeURIComponent(fontSizeInput.value)}`);
+      const query = params.length ? '?' + params.join('&') : '';
+
+      let code = '';
       if (integrationMode.value === 'iframe') {
-        const src = badgePreview.src;
-        const iframeCode = `<iframe src='${src}' style='border: none; background: transparent; width: 250px; height: 60px;' loading='lazy'></iframe>`;
-        navigator.clipboard.writeText(iframeCode).then(showToast);
+        code = `<iframe src='${base}index.html${query}' style='border: none; background: transparent; width: 250px; height: 60px;' loading='lazy'></iframe>`;
       } else {
-        const src = base + 'badge.min.js';
-        const scriptCode = `<div id=\"ratpi-badge\"></div>\n<script src=\"${src}\"></script>`;
-        navigator.clipboard.writeText(scriptCode).then(showToast);
+        code = `<div id=\"ratpi-badge\"></div>\n<script src=\"${base}badge.min.js${query}\"></script>`;
       }
+      navigator.clipboard.writeText(code).then(showToast);
     }
 
     function showToast() {
@@ -171,6 +195,12 @@
 
     // Init
     updatePreview();
+
+    animateSwitch.addEventListener('change', updatePreview);
+    themeSelect.addEventListener('change', updatePreview);
+    fontSizeInput.addEventListener('input', updatePreview);
+    integrationMode.addEventListener('change', updatePreview);
+    minifySwitch.addEventListener('change', updatePreview);
   </script>
 </body>
 </html>
