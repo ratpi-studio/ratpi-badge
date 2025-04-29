@@ -54,7 +54,7 @@ jobs:
           echo "Minifying files and appending version suffix..."
 
           npx html-minifier-terser index.html -o minified/index.min.${NEW_VERSION}.html --collapse-whitespace --remove-comments --minify-css true --minify-js true
-          npx terser badge.js -o minified/badge.min.${NEW_VERSION}.js --compress --mangle
+          npx terser badge.js -o minified/badge.min.${NEW_VERSION}.js --compress --mangle --ecma 2020 --toplevel --output beautify=false
 
       - name: Commit and Push Minified Files
         run: |
