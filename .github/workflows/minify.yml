@@ -32,8 +32,17 @@ jobs:
       - name: Increment Version
         id: increment_version
         run: |
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
-          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v OFS=. '{$NF++; print}')
+          # Vérifier si une version est spécifiée dans le dernier message de commit
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          if [[ $COMMIT_MESSAGE =~ \[version:\ ([0-9]+\.[0-9]+\.[0-9]+)\] ]]; then
+            NEW_VERSION="${BASH_REMATCH[1]}"
+            echo "Version found in commit message: $NEW_VERSION"
+          else
+            # Incrémentation automatique si aucune version n'est spécifiée
+            CURRENT_VERSION=$(node -p "require('./package.json').version")
+            NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v OFS=. '{$NF++; print}')
+            echo "No version found in commit message. Incrementing to: $NEW_VERSION"
+          fi
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           jq ".version = \"$NEW_VERSION\"" package.json > package.tmp.json && mv package.tmp.json package.json
           echo "Version updated to $NEW_VERSION"
@@ -43,7 +52,11 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
           git add package.json
-          git commit -m "Bump version to ${NEW_VERSION} [skip ci]"
+          if [ -n "${NEW_VERSION}" ]; then
+            git commit -m "Bump version to ${NEW_VERSION} [skip ci]"
+          else
+            git commit -m "Bump version [skip ci]"
+          fi
           git pull --rebase origin main
           git push origin main
         env:
@@ -106,7 +119,11 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Minified & obfuscated files for version ${NEW_VERSION} [skip ci]"
+            if [ -n "${NEW_VERSION}" ]; then
+              git commit -m "Minified & obfuscated files for version ${NEW_VERSION} [skip ci]"
+            else
+              git commit -m "Minified & obfuscated files [skip ci]"
+            fi
             git pull --rebase origin main
             git push origin main
           fi
