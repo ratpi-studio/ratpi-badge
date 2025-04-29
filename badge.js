@@ -6,7 +6,6 @@
     const fontsize = params.get("fontsize") || "0.75rem";
     const animate = params.get("animate");
   
-    // Fonction pour créer et injecter le badge
     function renderBadge() {
       const badge = document.createElement("a");
       badge.href = "https://ratpi-studio.fr";
@@ -45,10 +44,9 @@
       }
     }
   
-    // Fonction pour injecter dynamiquement la vraie logique JS selon la version
     function loadBadgeScript(version) {
       const script = document.createElement("script");
-      script.src = `https://ratpi-studio.github.io/ratpi-badge/minified/badge.min.js?version=${version}`;
+      script.src = `https://ratpi-studio.github.io/ratpi-badge/minified/badge.min.js?version=${encodeURIComponent(version)}`;
       document.body.appendChild(script);
     }
   
@@ -57,16 +55,29 @@
       const tags = await res.json();
       const latest = tags[0]?.name;
   
-      if (requestedVersion && tags.some(t => t.name === requestedVersion)) {
-        loadBadgeScript(requestedVersion);
+      if (!requestedVersion) {
+        // Pas de version dans l'URL → on utilise la dernière
+        loadBadgeScript(latest);
       } else {
-        const url = new URL(window.location.href);
-        url.searchParams.set("version", latest);
-        window.location.href = url.toString(); // Redirige avec la bonne version
-        return;
+        const versionExists = tags.some(tag => tag.name === requestedVersion);
+        if (versionExists) {
+          loadBadgeScript(requestedVersion);
+        } else {
+          if (requestedVersion !== latest) {
+            // Redirige seulement si on n’est pas déjà sur la version fallback
+            const url = new URL(window.location.href);
+            url.searchParams.set("version", latest);
+            window.location.href = url.toString();
+            return;
+          } else {
+            // Version fallback invalide aussi → on charge sans version
+            console.warn("Version invalide. Chargement sans fallback.");
+            loadBadgeScript("main");
+          }
+        }
       }
     } catch (err) {
-      console.warn("Échec du chargement des tags GitHub, chargement fallback.");
+      console.warn("Erreur GitHub API, chargement sans version.");
       loadBadgeScript("main");
     }
   
