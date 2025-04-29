@@ -83,8 +83,7 @@ jobs:
             exit 1
           fi
 
-          echo "Minifying and obfuscating index.html..."
-           npx javascript-obfuscator badge.js --output minified/badge.obf.${NEW_VERSION}.js \
+           npx javascript-obfuscator badge.js --output minified/badge.min.${NEW_VERSION}.js \
             --compact true \
             --control-flow-flattening true \
             --dead-code-injection true \
@@ -98,15 +97,6 @@ jobs:
             --string-array-index-shift true \
             --transform-object-keys true \
             --unicode-escape-sequence true
-        
-
-          if [ -f "minified/badge.obf.${NEW_VERSION}.js" ]; then
-            echo "Obfuscation successful. Copying final version..."
-            cp minified/badge.min.${NEW_VERSION}.js minified/badge.min.js
-          else
-            echo "Obfuscation failed!" >&2
-            exit 1
-          fi
 
       - name: Commit and Push Minified Files
         run: |
