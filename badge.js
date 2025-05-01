@@ -1,5 +1,12 @@
 !function(){
   const e = new URLSearchParams(window.location.search);
+  const container = document.getElementById("ratpi-badge-script-container");
+
+  if (!container) {
+    console.warn("Container with id 'ratpi-badge-script-container' not found.");
+    return;
+  }
+
   const n = document.createElement("a");
   n.href = "https://ratpi-studio.fr";
   n.target = "_blank";
@@ -30,7 +37,7 @@
   }
 
   n.innerHTML = `<span>Made with</span> <span class="mouse">🐭</span> <span>by Ratpi Studio!</span>`;
-  document.currentScript.parentNode.insertBefore(n, document.currentScript);
+  container.appendChild(n);
 
   if ("loop" === e.get("animate")) {
     const mouseIcon = n.querySelector(".mouse");

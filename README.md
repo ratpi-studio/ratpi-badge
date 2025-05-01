@@ -21,7 +21,7 @@ Petit badge animé à intégrer facilement sur vos sites et apps !
 
 ### 2. Par script JS (plus propre)
 ```html
-<div id="ratpi-badge"></div>
+<div id="ratpi-badge-script-container"></div>
 <script src="https://ratpi-studio.github.io/ratpi-badge/minified/badge.min.js"></script>
 ```
 

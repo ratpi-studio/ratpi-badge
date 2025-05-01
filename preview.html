@@ -185,9 +185,9 @@
         iframe.loading = 'lazy';
         previewContainer.appendChild(iframe);
       } else {
-        code = `<div id="ratpi-badge"></div>\n<script src="${base}badge.min.js${query}"/>`;
+        code = `<div id="ratpi-badge-script-container"></div>\n<script src="${base}badge.min.js${query}"></script>`;
         const div = document.createElement('div');
-        div.id = 'ratpi-badge';
+        div.id = 'ratpi-badge-script-container';
         previewContainer.appendChild(div);
         const script = document.createElement('script');
         script.src = base + 'badge.min.js' + query;
